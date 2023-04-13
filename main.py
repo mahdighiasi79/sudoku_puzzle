@@ -104,5 +104,31 @@ def OrderDomainValues(variable, domains):
     return heuristic_values
 
 
+def Inference(domains, variable, value):
+    row1 = variable[0]
+    column1 = variable[1]
+
+    row2 = variable[2]
+    column2 = variable[3]
+
+    for i in range(3):
+        for j in range(3):
+
+            if value in domains[row1][i][row2][j]:
+                domains[row1][i][row2][j].remove(value)
+                if len(domains[row1][i][row2][j]) == 0:
+                    return None
+
+            if value in domains[i][column1][j][column2]:
+                domains[i][column1][j][column2].remove(value)
+                if len(domains[i][column1][j][column2]) == 0:
+                    return None
+
+            if value in domains[row1][column1][i][j]:
+                domains[row1][column1][i][j].remove(value)
+                if len(domains[row1][column1][i][j]) == 0:
+                    return None
+
+
 if __name__ == '__main__':
     print(np.log(np.e))
