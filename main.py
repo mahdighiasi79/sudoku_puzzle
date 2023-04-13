@@ -1,4 +1,5 @@
 import numpy as np
+import copy
 
 Sudoku = [[[[-1] * 3] * 3] * 3] * 3
 Domains = [[[[[1, 2, 3, 4, 5, 6, 7, 8, 9]] * 3] * 3] * 3] * 3
@@ -170,8 +171,20 @@ def BackTrack(sudoku, domains):
         value = values[1]
 
         if Consistent(sudoku, variable, value):
-            sudoku[variable[0]][variable[1]][variable[2]][variable[3]] = value
+            sudoku_copy = copy.deepcopy(sudoku)
+            domains_copy = copy.deepcopy(domains)
+
+            sudoku_copy[variable[0]][variable[1]][variable[2]][variable[3]] = value
+
+            if Inference(domains_copy, variable, value) is not None:
+                result = BackTrack(sudoku_copy, domains_copy)
+                if result is not None:
+                    return result
+
+    return None
 
 
 if __name__ == '__main__':
-    print(np.log(np.e))
+    sudoku = copy.deepcopy(Sudoku)
+    sudoku[0][0][0][0] = 1
+    print(Sudoku[0][0][0][0])
