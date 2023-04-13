@@ -32,7 +32,7 @@ def Domain(sudoku, variable):
     return domain
 
 
-def SelectUnassignedVariable(sudoku):
+def SelectUnassignedVariable(sudoku, domains):
     biggest_heuristic_value = -1
     result = [-1, -1, -1, -1]
 
@@ -41,8 +41,10 @@ def SelectUnassignedVariable(sudoku):
             for k in range(3):
                 for l in range(3):
                     variable = [i, j, k, l]
+
                     if sudoku[i][j][k][l] == -1:
-                        heuristic_value = 9 - len(Domain(sudoku, variable))
+                        heuristic_value = 9 - len(domains[i][j][k][l])
+
                         if heuristic_value > biggest_heuristic_value:
                             biggest_heuristic_value = heuristic_value
                             result = variable
@@ -165,7 +167,7 @@ def BackTrack(sudoku, domains):
     if complete(sudoku):
         return sudoku
 
-    variable = SelectUnassignedVariable(sudoku)
+    variable = SelectUnassignedVariable(sudoku, domains)
 
     for values in OrderDomainValues(variable, domains):
         value = values[1]
