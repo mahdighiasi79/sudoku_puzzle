@@ -130,5 +130,15 @@ def Inference(domains, variable, value):
                     return None
 
 
+def complete(sudoku):
+    for i in range(3):
+        for j in range(3):
+            for k in range(3):
+                for l in range(3):
+                    if sudoku[i][j][k][l] == -1:
+                        return False
+    return True
+
+
 if __name__ == '__main__':
     print(np.log(np.e))
