@@ -135,19 +135,19 @@ def Inference(domains, variable, value):
         for j in range(3):
 
             if value in domains[row1][i][row2][j]:
-                domains[row1][i][row2][j].remove(value)
-                if len(domains[row1][i][row2][j]) == 0:
+                if len(domains[row1][i][row2][j]) == 1:
                     return None
+                domains[row1][i][row2][j].remove(value)
 
             if value in domains[i][column1][j][column2]:
-                domains[i][column1][j][column2].remove(value)
-                if len(domains[i][column1][j][column2]) == 0:
+                if len(domains[i][column1][j][column2]) == 1:
                     return None
+                domains[i][column1][j][column2].remove(value)
 
             if value in domains[row1][column1][i][j]:
-                domains[row1][column1][i][j].remove(value)
-                if len(domains[row1][column1][i][j]) == 0:
+                if len(domains[row1][column1][i][j]) == 1:
                     return None
+                domains[row1][column1][i][j].remove(value)
 
 
 def complete(sudoku):
@@ -169,7 +169,7 @@ def BackTrack(sudoku, domains):
     for values in OrderDomainValues(variable, domains):
         value = values[1]
 
-        if Inference(domains, variable, value) is not None:
+        if Consistent(sudoku, variable, value):
             sudoku[variable[0]][variable[1]][variable[2]][variable[3]] = value
 
 
