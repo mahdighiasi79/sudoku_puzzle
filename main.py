@@ -184,7 +184,16 @@ def BackTrack(sudoku, domains):
     return None
 
 
+def GetSudoku():
+    for i in range(3):
+        for j in range(3):
+            for k in range(3):
+                for l in range(3):
+                    value = input()
+                    if value != " ":
+                        Sudoku[i][j][k][l] = int(value)
+
+
 if __name__ == '__main__':
-    sudoku = copy.deepcopy(Sudoku)
-    sudoku[0][0][0][0] = 1
-    print(Sudoku[0][0][0][0])
+    GetSudoku()
+    print(BackTrack(Sudoku, Domains))
