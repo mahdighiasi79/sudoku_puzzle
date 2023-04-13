@@ -13,9 +13,6 @@ def Domain(sudoku, variable):
     row2 = variable[2]
     column2 = variable[3]
 
-    if sudoku[row1][column1][row2][column2] == -1:
-        return []
-
     for i in range(3):
         for j in range(3):
 
@@ -43,10 +40,11 @@ def SelectUnassignedVariable(sudoku):
             for k in range(3):
                 for l in range(3):
                     variable = [i, j, k, l]
-                    heuristic_value = 9 - len(Domain(sudoku, variable))
-                    if heuristic_value > biggest_heuristic_value:
-                        biggest_heuristic_value = heuristic_value
-                        result = variable
+                    if sudoku[i][j][k][l] == -1:
+                        heuristic_value = 9 - len(Domain(sudoku, variable))
+                        if heuristic_value > biggest_heuristic_value:
+                            biggest_heuristic_value = heuristic_value
+                            result = variable
     return result
 
 
@@ -63,19 +61,19 @@ def LeastConstrainingHeuristic(domains, variable, value):
         for j in range(3):
 
             domain = domains[row1][i][row2][j]
-            if value in domain and len(domain) != 0:
+            if value in domain:
                 result += np.log(len(domain) - 1) * 10
             else:
                 result += np.log(9) * 10
 
             domain = domains[i][column1][j][column2]
-            if value in domain and len(domain) != 0:
+            if value in domain:
                 result += np.log(len(domain) - 1) * 10
             else:
                 result += np.log(9) * 10
 
             domain = domains[row1][column1][i][j]
-            if value in domain and len(domain) != 0:
+            if value in domain:
                 result += np.log(len(domain) - 1) * 10
             else:
                 result += np.log(9) * 10
@@ -102,11 +100,9 @@ def OrderDomainValues(variable, domains):
         heuristic_value = LeastConstrainingHeuristic(domains, variable, value)
         heuristic_values.append([heuristic_value, i])
 
-    heuristic_values.sort(key=f)
+    heuristic_values.sort(key=f, reverse=True)
     return heuristic_values
 
 
 if __name__ == '__main__':
-    l = [[1, -1], [2, -2], [5, -5], [4, -4], [6, -6], [3, -3]]
-    l.sort(key=f)
-    print(l)
+    print(np.log(np.e))
