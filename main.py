@@ -1,8 +1,20 @@
-sudoku = [[[[-1] * 3] * 3] * 3] * 3
+import numpy as np
+
+Sudoku = [[[[-1] * 3] * 3] * 3] * 3
+Domains = [[[[[1, 2, 3, 4, 5, 6, 7, 8, 9]] * 3] * 3] * 3] * 3
 
 
-def RemainingValues(sudoku, row1, column1, row2, column2):
+def Domain(sudoku, variable):
     domain = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+    row1 = variable[0]
+    column1 = variable[1]
+
+    row2 = variable[2]
+    column2 = variable[3]
+
+    if sudoku[row1][column1][row2][column2] == -1:
+        return []
 
     for i in range(3):
         for j in range(3):
@@ -19,11 +31,10 @@ def RemainingValues(sudoku, row1, column1, row2, column2):
             if value != -1 and value in domain:
                 domain.remove(value)
 
-    result = 9 - len(domain)
-    return result
+    return domain
 
 
-def MRV(sudoku):
+def SelectUnassignedVariable(sudoku):
     biggest_heuristic_value = -1
     result = [-1, -1, -1, -1]
 
@@ -31,12 +42,71 @@ def MRV(sudoku):
         for j in range(3):
             for k in range(3):
                 for l in range(3):
-                    heuristic_value = RemainingValues(sudoku, i, j, k, l)
+                    variable = [i, j, k, l]
+                    heuristic_value = 9 - len(Domain(sudoku, variable))
                     if heuristic_value > biggest_heuristic_value:
                         biggest_heuristic_value = heuristic_value
-                        result = [i, j, k, l]
+                        result = variable
     return result
 
 
+def LeastConstrainingHeuristic(domains, variable, value):
+    result = 0
+
+    row1 = variable[0]
+    column1 = variable[1]
+
+    row2 = variable[2]
+    column2 = variable[3]
+
+    for i in range(3):
+        for j in range(3):
+
+            domain = domains[row1][i][row2][j]
+            if value in domain and len(domain) != 0:
+                result += np.log(len(domain) - 1) * 10
+            else:
+                result += np.log(9) * 10
+
+            domain = domains[i][column1][j][column2]
+            if value in domain and len(domain) != 0:
+                result += np.log(len(domain) - 1) * 10
+            else:
+                result += np.log(9) * 10
+
+            domain = domains[row1][column1][i][j]
+            if value in domain and len(domain) != 0:
+                result += np.log(len(domain) - 1) * 10
+            else:
+                result += np.log(9) * 10
+
+    return result
+
+
+def f(e):
+    return e[0]
+
+
+def OrderDomainValues(variable, domains):
+    row1 = variable[0]
+    column1 = variable[1]
+
+    row2 = variable[2]
+    column2 = variable[3]
+
+    domain = domains[row1][column1][row2][column2]
+    heuristic_values = []
+
+    for i in range(len(domain)):
+        value = domain[i]
+        heuristic_value = LeastConstrainingHeuristic(domains, variable, value)
+        heuristic_values.append([heuristic_value, i])
+
+    heuristic_values.sort(key=f)
+    return heuristic_values
+
+
 if __name__ == '__main__':
-    print(sudoku)
+    l = [[1, -1], [2, -2], [5, -5], [4, -4], [6, -6], [3, -3]]
+    l.sort(key=f)
+    print(l)
