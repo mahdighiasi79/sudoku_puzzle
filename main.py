@@ -95,13 +95,33 @@ def OrderDomainValues(variable, domains):
     domain = domains[row1][column1][row2][column2]
     heuristic_values = []
 
-    for i in range(len(domain)):
-        value = domain[i]
+    for value in domain:
         heuristic_value = LeastConstrainingHeuristic(domains, variable, value)
-        heuristic_values.append([heuristic_value, i])
+        heuristic_values.append([heuristic_value, value])
 
     heuristic_values.sort(key=f, reverse=True)
     return heuristic_values
+
+
+def Consistent(sudoku, variable, value):
+    row1 = variable[0]
+    column1 = variable[1]
+
+    row2 = variable[2]
+    column2 = variable[3]
+
+    for i in range(3):
+        for j in range(3):
+
+            if value == sudoku[row1][i][row2][j]:
+                return False
+
+            if value == sudoku[i][column1][j][column2]:
+                return False
+
+            if value == sudoku[row1][column1][i][j]:
+                return False
+    return True
 
 
 def Inference(domains, variable, value):
@@ -138,6 +158,19 @@ def complete(sudoku):
                     if sudoku[i][j][k][l] == -1:
                         return False
     return True
+
+
+def BackTrack(sudoku, domains):
+    if complete(sudoku):
+        return sudoku
+
+    variable = SelectUnassignedVariable(sudoku)
+
+    for values in OrderDomainValues(variable, domains):
+        value = values[1]
+
+        if Inference(domains, variable, value) is not None:
+            sudoku[variable[0]][variable[1]][variable[2]][variable[3]] = value
 
 
 if __name__ == '__main__':
