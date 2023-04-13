@@ -5,33 +5,6 @@ Sudoku = [[[[-1] * 3] * 3] * 3] * 3
 Domains = [[[[[1, 2, 3, 4, 5, 6, 7, 8, 9]] * 3] * 3] * 3] * 3
 
 
-def Domain(sudoku, variable):
-    domain = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-
-    row1 = variable[0]
-    column1 = variable[1]
-
-    row2 = variable[2]
-    column2 = variable[3]
-
-    for i in range(3):
-        for j in range(3):
-
-            value = sudoku[row1][i][row2][j]
-            if value != -1 and value in domain:
-                domain.remove(value)
-
-            value = sudoku[i][column1][j][column2]
-            if value != -1 and value in domain:
-                domain.remove(value)
-
-            value = sudoku[row1][column1][i][j]
-            if value != -1 and value in domain:
-                domain.remove(value)
-
-    return domain
-
-
 def SelectUnassignedVariable(sudoku, domains):
     biggest_heuristic_value = -1
     result = [-1, -1, -1, -1]
