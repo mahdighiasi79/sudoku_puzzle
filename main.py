@@ -157,7 +157,32 @@ def InitializeDomains():
                         Inference(Domains, variable, value)
 
 
+def Valid():
+    for i in range(3):
+        for j in range(3):
+            for k in range(3):
+                for l in range(3):
+                    value = Sudoku[i][j][k][l]
+
+                    if value != -1:
+                        for m in range(3):
+                            for n in range(3):
+
+                                if Sudoku[i][m][k][n] == value:
+                                    return False
+
+                                if Sudoku[m][j][n][l] == value:
+                                    return False
+
+                                if Sudoku[i][j][m][n] == value:
+                                    return False
+    return True
+
+
 if __name__ == '__main__':
     GetSudoku()
-    InitializeDomains()
-    print(BackTrack(Sudoku, Domains))
+    if Valid():
+        InitializeDomains()
+        print(BackTrack(Sudoku, Domains))
+    else:
+        print("this is not a valid sudoku!")
