@@ -79,27 +79,6 @@ def OrderDomainValues(variable, domains):
     return heuristic_values
 
 
-def Consistent(sudoku, variable, value):
-    row1 = variable[0]
-    column1 = variable[1]
-
-    row2 = variable[2]
-    column2 = variable[3]
-
-    for i in range(3):
-        for j in range(3):
-
-            if value == sudoku[row1][i][row2][j]:
-                return False
-
-            if value == sudoku[i][column1][j][column2]:
-                return False
-
-            if value == sudoku[row1][column1][i][j]:
-                return False
-    return True
-
-
 def Inference(domains, variable, value):
     row1 = variable[0]
     column1 = variable[1]
@@ -143,18 +122,16 @@ def BackTrack(sudoku, domains):
     variable = SelectUnassignedVariable(sudoku, domains)
 
     for values in OrderDomainValues(variable, domains):
+        sudoku_copy = copy.deepcopy(sudoku)
+        domains_copy = copy.deepcopy(domains)
         value = values[1]
 
-        if Consistent(sudoku, variable, value):
-            sudoku_copy = copy.deepcopy(sudoku)
-            domains_copy = copy.deepcopy(domains)
+        sudoku_copy[variable[0]][variable[1]][variable[2]][variable[3]] = value
 
-            sudoku_copy[variable[0]][variable[1]][variable[2]][variable[3]] = value
-
-            if Inference(domains_copy, variable, value) is not None:
-                result = BackTrack(sudoku_copy, domains_copy)
-                if result is not None:
-                    return result
+        if Inference(domains_copy, variable, value) is not None:
+            result = BackTrack(sudoku_copy, domains_copy)
+            if result is not None:
+                return result
 
     return None
 
@@ -169,6 +146,18 @@ def GetSudoku():
                         Sudoku[i][j][k][l] = int(value)
 
 
+def InitializeDomains():
+    for i in range(3):
+        for j in range(3):
+            for k in range(3):
+                for l in range(3):
+                    value = Sudoku[i][j][k][l]
+                    variable = [i, j, k, l]
+                    if value != -1:
+                        Inference(Domains, variable, value)
+
+
 if __name__ == '__main__':
     GetSudoku()
+    InitializeDomains()
     print(BackTrack(Sudoku, Domains))
